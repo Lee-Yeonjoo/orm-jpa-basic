@@ -18,6 +18,7 @@
             <property name="hibernate.show_sql" value="true"/> <!--sql 쿼리 어떤 거 날린건지 확인하는 용도-->
             <property name="hibernate.format_sql" value="true"/> <!--sql 쿼리문 정리해서 출력-->
             <property name="hibernate.use_sql_comments" value="true"/> <!-- 왜 실행했는지 자동 코멘트(주석)-->
+            <property name="hibernate.jdbc.batch_size" value="10"/>
             <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
         </properties>
     </persistence-unit>

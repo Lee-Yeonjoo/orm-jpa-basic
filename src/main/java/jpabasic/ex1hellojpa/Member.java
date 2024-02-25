@@ -15,6 +15,15 @@ public class Member {
     //@Column(name = "username") //insert 쿼리가 username으로 나간다.
     private String name;
 
+    public Member() {
+
+    } //기본생성자가 있어야한다!
+
+    public Member(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
