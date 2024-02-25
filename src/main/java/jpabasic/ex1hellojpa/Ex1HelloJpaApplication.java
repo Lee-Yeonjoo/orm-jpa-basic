@@ -80,10 +80,17 @@ public class Ex1HelloJpaApplication {
 			System.out.println("=========================");*/ //커밋 전엔 쿼리가 날라가지 않는다. 쓰기 지연됨 -> 버퍼링
 
 			//변경 감지
-			Member member = em.find(Member.class, 150L);
+			/*Member member = em.find(Member.class, 150L);
 			member.setName("ZZZZZ");
 			//em.persist(member); 다시 persist하지 않아도 된다. 컬렉션에서 바로 수정하는 것처럼.
-			System.out.println("===========================");
+			System.out.println("===========================");*/
+
+			//플러쉬
+			Member member = new Member(200L, "member200");
+			em.persist(member);
+
+			em.flush(); //강제로 flush. 이 시점에 쿼리를 날린다.
+			System.out.println("====================="); // 이 구분선 전에 insert쿼리 날린게 보인다.
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
