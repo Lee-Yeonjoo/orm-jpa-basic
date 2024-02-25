@@ -86,11 +86,19 @@ public class Ex1HelloJpaApplication {
 			System.out.println("===========================");*/
 
 			//플러쉬
-			Member member = new Member(200L, "member200");
+			/*Member member = new Member(200L, "member200");
 			em.persist(member);
 
 			em.flush(); //강제로 flush. 이 시점에 쿼리를 날린다.
-			System.out.println("====================="); // 이 구분선 전에 insert쿼리 날린게 보인다.
+			System.out.println("=====================");*/ // 이 구분선 전에 insert쿼리 날린게 보인다.
+
+			//준영속
+			Member member = em.find(Member.class, 150L);  //조회도 영속상태가 된다.
+			member.setName("AAAAA"); //여기까진 영속상태니까 더티체킹
+
+			em.detach(member); //준영속 상태(영속이었다가 제외되는것)가 된다. jpa가 더이상 관리x
+			System.out.println("=====================");
+
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
