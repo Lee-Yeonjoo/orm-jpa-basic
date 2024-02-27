@@ -13,6 +13,7 @@ public class Member {
     private Long id;
 
     //@Column(name = "username") //insert 쿼리가 username으로 나간다.
+    @Column(unique = true, length = 10) //유니크 제약 조건 지정, 길이 제한 -> 런타임에 영향x, 그냥 DDL 생성에만 영향 준다.
     private String name;
 
     public Member() {

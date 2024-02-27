@@ -10,6 +10,7 @@
             <property name="jakarta.persistence.jdbc.password" value=""/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/test"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>--> <!-- 방언을 바꾸면 바꾼대로 반영됨-->
 
             <!--JAVA Transaction API를 javax에서 찾아서 jakarta에서 찾으라는 속성-->
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JakartaJtaPlatform" />
@@ -19,7 +20,7 @@
             <property name="hibernate.format_sql" value="true"/> <!--sql 쿼리문 정리해서 출력-->
             <property name="hibernate.use_sql_comments" value="true"/> <!-- 왜 실행했는지 자동 코멘트(주석)-->
             <property name="hibernate.jdbc.batch_size" value="10"/>
-            <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
+            <property name="hibernate.hbm2ddl.auto" value="create" /> <!-- 옵션을 create로 하면 실행 시 테이블을 drop 후 새로 생성-->
         </properties>
     </persistence-unit>
 </persistence>
