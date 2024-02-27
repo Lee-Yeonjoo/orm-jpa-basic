@@ -22,83 +22,12 @@ public class Ex1HelloJpaApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
-			/* 회원 등록
 			Member member = new Member();
 			member.setId(2L);
-			member.setName("HelloB");
-			em.persist(member);*/
+			member.setUsername("A");
+			member.setRoleType(RoleType.ADMIN);
 
-			/*//회원 단건 조회. 조회의 경우는 트랜잭션이 아니어도 가능.
-			Member findMember = em.find(Member.class, 1L);
-			System.out.println("findMember = "+ findMember.getName());
-
-			//회원 수정
-			findMember.setName("HelloJPA");
-			//em.persist(findMember);로 또 저장하지 않아도 된다! 트랜잭션을 커밋하기 전에 JPA가 알아서 바뀐 내용에 대해 업데이트 쿼리를 날린다.
-
-			//회원 삭제
-			//em.remove(findMember);
-
-			//JPQL
-			//전체 회원 조회
-			List<Member> result = em.createQuery("select m from Member as m", Member.class)
-					//.setFirstResult(5)
-					//.setMaxResults(8) //페이지네이션을 쉽게 할 수 있다. id5~8만 조회
-					.getResultList(); //JPQL은 테이블 대상이 아닌 객체를 대상으로 쿼리를 작성해야한다. 실제 쿼리는 필드마다 다 select하는데 JPQL은 그냥 엔티티만 select함.
-
-			for (Member member: result) {
-				System.out.println("member.name = "+member.getName());
-			}*/
-			//JPQL은 엔티티 객체를 대상으로, SQL은 데이터베이스 테이블을 대상으로 쿼리.
-
-			//영속성 컨텍스트1
-			//비영속
-			/*Member member = new Member();
-			member.setId(101L);
-			member.setName("HelloJPA");
-
-			//영속 -> 엔티티 매니저의 영속성 컨텍스트에 의해 엔티티가 관리되는 상태
-			System.out.println("===== BEFORE =====");
-			em.persist(member); //이때 사실 DB에 저장되는 게 아니다. 1차 캐시에 저장됨.
-			System.out.println("===== AFTER =====");*/
-
-			//영속성 컨텍스트2
-			/*Member findMember1 = em.find(Member.class, 101L); //DB에서 조회한게 아닌 1차 캐시에서 찾아온 것. -> 쿼리가 안 날라간 이유.
-			//이후에 앞의 코드 지운 후 실행하면, select쿼리가 날라간다. -> DB에서 조회
-			//System.out.println("findMember.id = " + findMember1.getId());
-			//System.out.println("findMember.name = " + findMember1.getName());
-			Member findMember2 = em.find(Member.class, 101L); //또 조회하면 1차 캐시에서 찾아오므로 쿼리가 안날라감.
-
-			System.out.println("result = "+ (findMember1 == findMember2));*/ //영속 엔티티의 동일성 보장.
-
-			//쓰기 지연
-			/*Member member1 = new Member(150L, "A");
-			Member member2 = new Member(160L, "B");
-
-			em.persist(member1);
-			em.persist(member2);
-			System.out.println("=========================");*/ //커밋 전엔 쿼리가 날라가지 않는다. 쓰기 지연됨 -> 버퍼링
-
-			//변경 감지
-			/*Member member = em.find(Member.class, 150L);
-			member.setName("ZZZZZ");
-			//em.persist(member); 다시 persist하지 않아도 된다. 컬렉션에서 바로 수정하는 것처럼.
-			System.out.println("===========================");*/
-
-			//플러쉬
-			/*Member member = new Member(200L, "member200");
 			em.persist(member);
-
-			em.flush(); //강제로 flush. 이 시점에 쿼리를 날린다.
-			System.out.println("=====================");*/ // 이 구분선 전에 insert쿼리 날린게 보인다.
-
-			//준영속
-			Member member = em.find(Member.class, 150L);  //조회도 영속상태가 된다.
-			member.setName("AAAAA"); //여기까진 영속상태니까 더티체킹
-
-			em.detach(member); //준영속 상태(영속이었다가 제외되는것)가 된다. jpa가 더이상 관리x
-			System.out.println("=====================");
-
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
