@@ -9,6 +9,10 @@ import java.util.Date;
 
 @Entity //이걸 넣어야 jpa가 관리함.
 //@Table(name = "USER") //테이블명이 USER인 테이블과 매핑
+@SequenceGenerator(
+        name = "MEMBER_SEQ_GENERATOR",
+        sequenceName = "MEMBER_SEQ",
+        initialValue = 1, allocationSize = 50 )
 public class Member {
 
     /*@Id //jpa에게 pk가 뭔지 알려줘야함.
@@ -44,6 +48,8 @@ public class Member {
     }*/
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "MEMBER_SEQ_GENERATOR")
     private Long id;
 
     @Column(name = "name")
@@ -84,5 +90,9 @@ public class Member {
 
     public void setRoleType(RoleType roleType) {
         this.roleType = roleType;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

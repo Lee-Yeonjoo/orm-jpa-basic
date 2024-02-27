@@ -23,11 +23,12 @@ public class Ex1HelloJpaApplication {
 
 		try {
 			Member member = new Member();
-			member.setId(2L);
-			member.setUsername("A");
-			member.setRoleType(RoleType.ADMIN);
+			member.setUsername("C");
 
-			em.persist(member);
+			System.out.println("=================");
+			em.persist(member); //이때 pk를 가져와야 영속성 컨텍스트 가능
+			System.out.println("member.id = "+member.getId());
+			System.out.println("=================");
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
