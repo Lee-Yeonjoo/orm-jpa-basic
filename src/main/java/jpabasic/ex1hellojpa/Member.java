@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity //이걸 넣어야 jpa가 관리함.
+/*@Entity //이걸 넣어야 jpa가 관리함.
 //@Table(name = "USER") //테이블명이 USER인 테이블과 매핑
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
@@ -15,7 +15,7 @@ import java.util.Date;
         initialValue = 1, allocationSize = 50 )
 public class Member {
 
-    /*@Id //jpa에게 pk가 뭔지 알려줘야함.
+    *//*@Id //jpa에게 pk가 뭔지 알려줘야함.
     private Long id;
 
     //@Column(name = "username") //insert 쿼리가 username으로 나간다.
@@ -45,7 +45,7 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
-    }*/
+    }*//*
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
@@ -94,5 +94,55 @@ public class Member {
 
     public Long getId() {
         return id;
+    }
+}*/
+
+@Entity
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MEMBER_ID")
+    private Long id;
+
+    @Column(name = "USERNAME")
+    private String username;
+
+  /*  @Column(name = "TEAM_ID")
+    private Long teamId;*/
+    @ManyToOne //멤버 입장에서 many이니까. 어떤 연관관계인지. 다대일관계
+    @JoinColumn(name = "TEAM_ID") //조인하는 컬럼이 뭔지 적어준다.
+    private Team team;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /*public Long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }*/
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
