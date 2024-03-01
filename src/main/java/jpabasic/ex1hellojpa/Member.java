@@ -1,11 +1,6 @@
 package jpabasic.ex1hellojpa;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /*@Entity //이걸 넣어야 jpa가 관리함.
 //@Table(name = "USER") //테이블명이 USER인 테이블과 매핑
@@ -111,6 +106,10 @@ public class Member {
     @ManyToOne
     @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) //일대다 양방향 -> 다대일 단방향에다가 insert, update를 막아서 읽기만 가능하게 해서 구현.
     private Team team;
+
+    @OneToOne
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
 
     public Long getId() {
         return id;
