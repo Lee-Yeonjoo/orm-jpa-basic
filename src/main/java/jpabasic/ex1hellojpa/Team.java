@@ -16,13 +16,8 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "team") //Member클래스의 team과 매핑되어있단 뜻. team에 의해 관리됨. 즉, 읽기만 가능.
-    private List<Member> members = new ArrayList<>(); //arraylist로 초기화하는게 nullpoint가 안뜨므로 관례
-
-    public void addMember(Member member) { //여기에서도 연관관계 편의 메서드를 만들 수 있다. -> 한쪽에만 만들기.
-        member.setTeam(this);
-        members.add(member);
-    }
+    @OneToMany(mappedBy = "team")
+    private List<Member> members = new ArrayList<>(); //다대일 '양방향'
 
     public Long getId() {
         return id;
