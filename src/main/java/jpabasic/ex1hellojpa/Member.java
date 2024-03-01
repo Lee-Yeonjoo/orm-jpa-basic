@@ -2,6 +2,9 @@ package jpabasic.ex1hellojpa;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*@Entity //이걸 넣어야 jpa가 관리함.
 //@Table(name = "USER") //테이블명이 USER인 테이블과 매핑
 @SequenceGenerator(
@@ -110,6 +113,13 @@ public class Member {
     @OneToOne
     @JoinColumn(name = "LOCKER_ID")
     private Locker locker;
+
+    /*@ManyToMany //실무에선 쓰지 않는다.
+    @JoinTable(name = "MEMBER_PRODUCT")
+    private List<Product> products = new ArrayList<>();*/
+
+    @OneToMany(mappedBy = "member") //실무에서의 다대다
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     public Long getId() {
         return id;
