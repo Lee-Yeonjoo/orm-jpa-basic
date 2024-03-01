@@ -36,26 +36,45 @@ public class Ex1HelloJpaApplication {
 			//저장
 			Team team = new Team();
 			team.setName("TeamA");
+			//team.getMembers().add(member); 연관관계의 주인이 아님. -> 읽기 전용이라서 업데이트되지 않는다.
 			em.persist(team);
 
 			Member member = new Member();
 			member.setUsername("member1");
-			//member.setTeamId(team.getId());
-			member.setTeam(team);  //이러면 jpa가 알아서 팀의 pk값을 꺼내서 fk값으로 사용
+			member.changeTeam(team); //연관관계의 주인에서 set해줘야한다.
 			em.persist(member);
 
+			//team.getMembers().add(member);
+
 			//1차 캐시로 인해 안나가는 select 쿼리 확인하고 싶은 경우
-			em.flush(); //현재 영속성 컨텍스트 저장소의 쿼리를 다 날림.
-			em.clear(); //영속성 컨텍스트 초기화
+			//em.flush(); //현재 영속성 컨텍스트 저장소의 쿼리를 다 날림.
+			//em.clear(); //영속성 컨텍스트 초기화
+
+			Team findTeam = em.find(Team.class, team.getId());
+			List<Member> members = findTeam.getMembers();
+
+			System.out.println("==================");
+			for (Member m :
+					members) {
+				System.out.println("m = " + findTeam); //스택오버플로우 에러가 난다. toString()에 의해 무한루프에 빠짐.
+			}
+			System.out.println("==================");
 
 			//조회
-			Member findMember = em.find(Member.class, member.getId());
+			/*Member findMember = em.find(Member.class, member.getId());
 
 			//Long findTeamId = findMember.getTeamId(); //연관관계를 식별자로 저장한다면 조회할 때 바로 get 못하고 식별자로 찾는 과정이 생겨서 번거롭다.
 			//Team findTeam = em.find(Team.class, findTeamId);
-			Team findTeam = findMember.getTeam(); //객체지향스럽게 참조를 한다.
+			//Team findTeam = findMember.getTeam(); //객체지향스럽게 참조를 한다.
 
-			System.out.println("findTeam = "+findTeam.getName());
+			//System.out.println("findTeam = "+findTeam.getName());
+
+			List<Member> members = findMember.getTeam().getMembers();
+			for (Member m :
+					members) {
+				System.out.println("m = "+m.getUsername());
+			}*/
+
 
 
 

@@ -111,7 +111,7 @@ public class Member {
   /*  @Column(name = "TEAM_ID")
     private Long teamId;*/
     @ManyToOne //멤버 입장에서 many이니까. 어떤 연관관계인지. 다대일관계
-    @JoinColumn(name = "TEAM_ID") //조인하는 컬럼이 뭔지 적어준다.
+    @JoinColumn(name = "TEAM_ID") //조인하는 컬럼이 뭔지 적어준다. db와 연결됨. 외래키를 관리! 연관관계의 주인.
     private Team team;
 
     public Long getId() {
@@ -142,7 +142,22 @@ public class Member {
         return team;
     }
 
+    public void changeTeam(Team team) {
+        this.team = team;
+        team.getMembers().add(this); //이 코드를 추가해 연관관계 편의 메서드를 만들기!
+        //이미 멤버리스트에 자기자신이 있는지 체크하는 로직이 필요할 때도 있다.
+    }
+
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    /*@Override
+    public String toString() { //team의 toString()을 호출하는데 여기서도 members의 toString()을 호출해서 무한루프에 빠짐.
+        return "Member{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", team=" + team +
+                '}';
+    }*/
 }
