@@ -19,17 +19,19 @@ public class Ex1HelloJpaApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
+			Movie movie = new Movie();
+			movie.setDirector("aaaa");
+			movie.setActor("bbbb");
+			movie.setName("바람과 함께 사라지다");
+			movie.setPrice(10000);
 
-			Member member = new Member();
-			member.setUsername("member1");
+			em.persist(movie); //두 번 insert가 된다.(조인 전략)
 
-			em.persist(member);
+			em.flush();
+			em.clear(); //영속성 컨텍스트의 1차 캐시 사용 안하기 위해
 
-			Team team = new Team();
-			team.setName("teamA");  //여기까진 TEAM테이블에 쿼리를 날림
-			team.getMembers().add(member);  //이거는 MEMBER테이블에 업데이트 쿼리를 또 날림.
-
-			em.persist(team);
+			Movie findMovie = em.find(Movie.class, movie.getId()); //join해서 조회한다.(조인 전략)
+			System.out.println("findMovie = "+ findMovie);
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
