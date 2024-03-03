@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication
@@ -19,19 +20,16 @@ public class Ex1HelloJpaApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
-			Movie movie = new Movie();
-			movie.setDirector("aaaa");
-			movie.setActor("bbbb");
-			movie.setName("바람과 함께 사라지다");
-			movie.setPrice(10000);
+			Member member = new Member();
+			member.setUsername("user1");
+			member.setCreatedBy("kim");
+			member.setCreatedDate(LocalDateTime.now());  //ㅗㅗ일일히 넣지 않아도 자동으로 넣을 수 있다.
 
-			em.persist(movie); //두 번 insert가 된다.(조인 전략)
+			em.persist(member);
 
 			em.flush();
 			em.clear(); //영속성 컨텍스트의 1차 캐시 사용 안하기 위해
 
-			Item findMovie = em.find(Item.class, movie.getId()); //join해서 조회한다.(조인 전략)
-			System.out.println("findMovie = "+ findMovie);
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
