@@ -3,8 +3,7 @@ package jpabasic.ex1hellojpa;
 import jakarta.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED) //조인전략으로 설정
-@DiscriminatorColumn //디타입을 표시해준다. 사용하는 게 좋음.
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Item {
 
     @Id @GeneratedValue
