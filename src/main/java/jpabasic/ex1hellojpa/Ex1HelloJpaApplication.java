@@ -30,7 +30,7 @@ public class Ex1HelloJpaApplication {
 			em.flush();
 			em.clear(); //영속성 컨텍스트의 1차 캐시 사용 안하기 위해
 
-			Movie findMovie = em.find(Movie.class, movie.getId()); //join해서 조회한다.(조인 전략)
+			Item findMovie = em.find(Item.class, movie.getId()); //join해서 조회한다.(조인 전략)
 			System.out.println("findMovie = "+ findMovie);
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)

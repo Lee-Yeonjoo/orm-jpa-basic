@@ -3,8 +3,8 @@ package jpabasic.ex1hellojpa;
 import jakarta.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Item {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) //세번째 전략
+public abstract class Item { //추상클래스로 만들어야함! 일반 클래스면 따로 Item클래스를 쓸 데가 있다고 보고 반영이 안된다.
 
     @Id @GeneratedValue
     private Long id;
