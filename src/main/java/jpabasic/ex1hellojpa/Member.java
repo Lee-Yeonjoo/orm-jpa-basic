@@ -106,8 +106,8 @@ public class Member extends BaseEntity{
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne
-    @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) //일대다 양방향 -> 다대일 단방향에다가 insert, update를 막아서 읽기만 가능하게 해서 구현.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEAM_ID")
     private Team team;
 
    /* @OneToOne
@@ -139,6 +139,10 @@ public class Member extends BaseEntity{
 
     public Team getTeam() {
         return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public List<MemberProduct> getMemberProducts() {
