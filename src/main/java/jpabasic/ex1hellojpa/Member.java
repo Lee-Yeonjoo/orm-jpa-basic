@@ -110,9 +110,9 @@ public class Member extends BaseEntity{
     @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) //일대다 양방향 -> 다대일 단방향에다가 insert, update를 막아서 읽기만 가능하게 해서 구현.
     private Team team;
 
-    @OneToOne
+   /* @OneToOne
     @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
+    private Locker locker;*/
 
     /*@ManyToMany //실무에선 쓰지 않는다.
     @JoinTable(name = "MEMBER_PRODUCT")
@@ -137,4 +137,11 @@ public class Member extends BaseEntity{
         this.username = username;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
+    public List<MemberProduct> getMemberProducts() {
+        return memberProducts;
+    }
 }
