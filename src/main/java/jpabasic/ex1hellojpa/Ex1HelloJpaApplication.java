@@ -22,23 +22,11 @@ public class Ex1HelloJpaApplication {
 
 		try {
 
-			Child child1 = new Child();
-			Child child2 = new Child();
-
-			Parent parent = new Parent();
-			parent.addChild(child1);
-			parent.addChild(child2);
-
-			em.persist(parent);
-			em.persist(child1);
-			em.persist(child2); //parent 중심으로 persist를 한번만 하고 싶으면 cascade
-
-			em.flush();
-			em.clear();
-
-			Parent findParent = em.find(Parent.class, parent.getId());
-			//findParent.getChildList().remove(0);
-			em.remove(findParent);  //orphanRemoval = true라서 부모가 지워지면 자식도 다 delete
+			Member member = new Member();
+			member.setUsername("hello");
+			member.setHomeAddress(new Address("city", "street", "zipcode"));
+			member.setWorkPeriod(new Period());
+			em.persist(member);
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
@@ -50,15 +38,4 @@ public class Ex1HelloJpaApplication {
 		emf.close(); //웹 어플리케이션의 경우 WAS가 내려갈때 닫아줘야 해서 try문으로 꼭 닫아줘야한다.
 	}
 
-	private static void printMember(Member member) {
-		System.out.println("member = "+ member.getUsername());
-	}
-
-	private static void printMemberAndTeam(Member member) {
-		String username = member.getUsername();
-		System.out.println("username = " + username);
-
-		Team team = member.getTeam();
-		System.out.println("team = "+ team.getName());
-	}
 }

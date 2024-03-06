@@ -2,6 +2,7 @@ package jpabasic.ex1hellojpa;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class Member {
 }*/
 
 @Entity
-public class Member extends BaseEntity{
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,20 +107,24 @@ public class Member extends BaseEntity{
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    //기간 Period
+    @Embedded
+    private Period workPeriod;
 
-   /* @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;*/
+    //주소
+    @Embedded
+    private Address homeAddress;
 
-    /*@ManyToMany //실무에선 쓰지 않는다.
-    @JoinTable(name = "MEMBER_PRODUCT")
-    private List<Product> products = new ArrayList<>();*/
-
-    @OneToMany(mappedBy = "member") //실무에서의 다대다
-    private List<MemberProduct> memberProducts = new ArrayList<>();
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city",
+                column = @Column(name = "WORK_CITY")),
+            @AttributeOverride(name = "street",
+                    column = @Column(name = "WORK_STREET")),
+            @AttributeOverride(name = "zipcode",
+                    column = @Column(name = "WORK_ZIPCODE")),
+    })
+    private Address workAddress; //같은 값 타입 사용을 하려면 속성명을 다르게 지정해줘야 한다.
 
     public Long getId() {
         return id;
@@ -137,15 +142,19 @@ public class Member extends BaseEntity{
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 
-    public List<MemberProduct> getMemberProducts() {
-        return memberProducts;
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }
