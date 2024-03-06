@@ -21,39 +21,24 @@ public class Ex1HelloJpaApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
-			Team team = new Team();
-			team.setName("teamA");
-			em.persist(team);
 
-			Team teamB = new Team();
-			teamB.setName("teamB");
-			em.persist(teamB);
+			Child child1 = new Child();
+			Child child2 = new Child();
 
-			Member member1 = new Member();
-			member1.setUsername("member");
-			member1.setTeam(team);
-			em.persist(member1);
+			Parent parent = new Parent();
+			parent.addChild(child1);
+			parent.addChild(child2);
 
-			Member member2 = new Member();
-			member2.setUsername("member2");
-			member2.setTeam(teamB);
-			em.persist(member2);
-
+			em.persist(parent);
+			em.persist(child1);
+			em.persist(child2); //parent 중심으로 persist를 한번만 하고 싶으면 cascade
 
 			em.flush();
 			em.clear();
 
-			/*Member m = em.find(Member.class, member1.getId());
-			System.out.println("m = "+ m.getTeam().getClass()); //팀은 프록시로 가져온다.
-
-			System.out.println("=====================");
-			m.getTeam().getName();*/
-
-			List<Member> members = em.createQuery("select m from Member m", Member.class) //EAGER로 세팅했는데도 커리가 두번 나감. JPQL을 SQL 그대로 날리기 때문에 member를 가지고 옴. 그 후 즉시로딩인 걸 알아서 바로 team을 가져오는 쿼리도 날린다.
-					.getResultList();
-			//SQL: select * from Member
-			//SQL: select * from Team where TEAM_ID = xxx
-
+			Parent findParent = em.find(Parent.class, parent.getId());
+			//findParent.getChildList().remove(0);
+			em.remove(findParent);  //orphanRemoval = true라서 부모가 지워지면 자식도 다 delete
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
