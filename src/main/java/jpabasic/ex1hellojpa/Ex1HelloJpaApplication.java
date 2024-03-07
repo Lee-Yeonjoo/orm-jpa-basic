@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
 public class Ex1HelloJpaApplication {
@@ -22,25 +23,53 @@ public class Ex1HelloJpaApplication {
 
 		try {
 
-			Address address = new Address("city", "street", "10000");
-
 			Member member = new Member();
 			member.setUsername("member1");
-			member.setHomeAddress(address);
-			em.persist(member);
+			member.setHomeAddress(new Address("homeCity", "street", "10000"));
 
-			Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+			member.getFavoriteFood().add("치킨");
+			member.getFavoriteFood().add("족발");
+			member.getFavoriteFood().add("피자");
 
-			Member member2 = new Member();
-			member2.setUsername("member2");
-			member2.setHomeAddress(copyAddress); //member와 member2가 같은 address를 쓰고 있다. -> 복사해서 사용해야한다!
-			em.persist(member2);
+			/*member.getAddressHistory().add(new Address("old1", "street", "10000"));
+			member.getAddressHistory().add(new Address("old2", "street", "10000"));
+*/
+			//엔티티로 저장
+			member.getAddressHistory().add(new AddressEntity("old1", "street", "10000"));
+			member.getAddressHistory().add(new AddressEntity("old2", "street", "10000"));
 
-			//member.getHomeAddress().setCity("newCity"); //member의 city만 newCity로 바꾸고 싶은데 member2의 city도 바뀜 -> 이런 사이드이펙트에 의한 버그는 잡기 어렵다.
-			//Address가 불변객체가 되어서 setter사용x -> 사이드 이펙트를막을 수 있다.
-			//값을 바꾸고 싶을 땐 새로 만들어야 한다. or 카피 메서드를 만들어도됨.
-			Address newAddress = new Address("NewCity", address.getStreet(), address.getZipcode());
-			member.setHomeAddress(newAddress);
+			em.persist(member);  //값 타입 컬렉션들이 따로 persist하지 않아도 같이 저장됨. 값 타입은 자신의 라이프 사이클이 없고, member에 의존.
+
+			em.flush();
+			em.clear();
+
+			System.out.println("==========================");
+			Member findMember = em.find(Member.class, member.getId()); //멤버만 조회한다. 컬렉션은 지연로딩!
+
+			/*List<Address> addressesHistory = findMember.getAddressHistory();
+			for (Address address : addressesHistory) {
+				System.out.println("address = " + address.getCity());
+			}
+
+			Set<String> favoriteFoods = findMember.getFavoriteFood();
+			for (String fovriteFood : favoriteFoods) {
+				System.out.println("favoriteFood = "+favoriteFoods);
+			}  //지연로딩이다.*/
+
+			//값 타입 수정
+			//findMember.getHomeAddress().setCity("newCity"); //수정할 때 값 타입은 그냥 새 객체를 저장해야함. setter쓰면 안된다.
+			Address a = findMember.getHomeAddress();
+			findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));  //바꾼거로 새로 만들어서 갈아끼운다.
+
+			//값 타입 컬렉션 수정. 치킨 -> 한식
+			findMember.getFavoriteFood().remove("치킨");
+			findMember.getFavoriteFood().add("한식"); //지우고 새로 저장해야한다. String을 변경할 수 없으니까
+			//컬렉션만 바꿔준건데 db에도 반영됨. 영속성 전이.
+
+			//주소 바꾸기
+			//findMember.getAddressHistory().remove(new Address("old1", "street", "10000")); //지울 대상을 찾을 때 equals로 찾는다. 그래서 equals의 hashCode를 제대로 넣어야한다! 이때 member_id와 관련된 것을 다 지운다.
+			//findMember.getAddressHistory().add(new Address("newCity", "street", "10000")); //다 지운 후, 남은 거만 insert한다.
+
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*@Entity //이걸 넣어야 jpa가 관리함.
 //@Table(name = "USER") //테이블명이 USER인 테이블과 매핑
@@ -107,24 +109,41 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-    //기간 Period
-    @Embedded
-    private Period workPeriod;
-
-    //주소
     @Embedded
     private Address homeAddress;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "city",
-                column = @Column(name = "WORK_CITY")),
-            @AttributeOverride(name = "street",
-                    column = @Column(name = "WORK_STREET")),
-            @AttributeOverride(name = "zipcode",
-                    column = @Column(name = "WORK_ZIPCODE")),
-    })
-    private Address workAddress; //같은 값 타입 사용을 하려면 속성명을 다르게 지정해줘야 한다.
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD", joinColumns =
+        @JoinColumn(name = "MEMBER_ID")) //테이블명 지정하고, 외래키로 member_id 지정
+    @Column(name = "FOOD_NAME")
+    private Set<String> favoriteFood = new HashSet<>();
+
+    /* @ElementCollection
+     @CollectionTable(name = "ADDRESS", joinColumns =
+         @JoinColumn(name = "MEMBER_ID"))
+     private List<Address> addressHistory = new ArrayList<>();
+ */
+    //값 타입 대신 엔티티로 매핑
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID")  //특이케이스이니 일대다 단방향 매핑을 한다.
+    private List<AddressEntity> addressHistory = new ArrayList<>();
+
+
+    public Set<String> getFavoriteFood() {
+        return favoriteFood;
+    }
+
+    public void setFavoriteFood(Set<String> favoriteFood) {
+        this.favoriteFood = favoriteFood;
+    }
+/*
+    public List<Address> getAddressHistory() {
+        return addressHistory;
+    }
+
+    public void setAddressHistory(List<Address> addressHistory) {
+        this.addressHistory = addressHistory;
+    }*/
 
     public Long getId() {
         return id;
@@ -142,19 +161,19 @@ public class Member {
         this.username = username;
     }
 
-    public Period getWorkPeriod() {
-        return workPeriod;
-    }
-
-    public void setWorkPeriod(Period workPeriod) {
-        this.workPeriod = workPeriod;
-    }
-
     public Address getHomeAddress() {
         return homeAddress;
     }
 
     public void setHomeAddress(Address homeAddress) {
         this.homeAddress = homeAddress;
+    }
+
+    public List<AddressEntity> getAddressHistory() {
+        return addressHistory;
+    }
+
+    public void setAddressHistory(List<AddressEntity> addressHistory) {
+        this.addressHistory = addressHistory;
     }
 }

@@ -2,13 +2,15 @@ package jpabasic.ex1hellojpa;
 
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
+@Embeddable
 public class Address {
     private String city;
     private String street;
-    @Column(name = "ZIPCODE") //이거도 가능.
+    //@Column(name = "ZIPCODE") //이거도 가능.
     private String zipcode;
 
     public Address() {
