@@ -20,40 +20,29 @@ public class JpqlApplication {
 
 		try {
 
-			Team team = new Team();
-			team.setName("teamA");
-			em.persist(team);
+			Member member1 = new Member();
+			member1.setUsername("관리자1");
+			em.persist(member1);
 
-			Member member = new Member();
-			member.setUsername(null);
-			member.setAge(10);
-			member.setType(MemberType.ADMIN);
-			member.setTeam(team);
-
-			em.persist(member);
+			Member member2 = new Member();
+			member2.setUsername("관리자2");
+			em.persist(member2);
 
 			em.flush();
 			em.clear();
 
-			String query = "select " +
-								"case when m.age <= 10 then '학생요금' "+
-								"     when m.age >= 60 then '경로요금' "+
-								"     else '일반요금' "+
-								"end "+
-							"from Member m";
+			String concat = "select concat('a', 'b') from Member m"; //'a' || 'b'로도 가능. -> un-inject language해야함.
+			String substring = "select substring(m.username, 2, 3) from Member m"; //두번째부터 3개를 자르기
+			String locate = "select locate('de', 'abcdefg') from Member m"; //abcdefg에서 de의 위치를 반환. Integer로 반환.
+			String size = "select size(t.members) from Team t";  //t.members 컬렉션의 크기를 알려준다.
+			String index = "select index(t.members) from Team t";
 
-			String query2 = "select coalesce(m.username, '이름 없는 회원') from Member m"; //null이면 '이름 없는 회원'으로 반환
-			String query3 = "select nullif(m.username, '관리자') from Member m";  //관리자의 이름을 숨기고 싶어서.
-
-			List<String> result = em.createQuery(query3, String.class)
+			List<Integer> result = em.createQuery(size, Integer.class)
 					.getResultList();
 
-			System.out.println("result.size = " + result.size());
-			for (String s:
-					result) {
+			for (Integer s: result) {
 				System.out.println("s = "+ s);
 			}
-
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
