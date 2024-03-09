@@ -27,6 +27,7 @@ public class JpqlApplication {
 			Member member = new Member();
 			member.setUsername("member");
 			member.setAge(10);
+			member.setType(MemberType.ADMIN);
 			member.setTeam(team);
 
 			em.persist(member);
@@ -34,18 +35,22 @@ public class JpqlApplication {
 			em.flush();
 			em.clear();
 
-			String query = "select m from Member m inner join m.team t"; //내부 조인. 이제 t 사용가능.
-			String query2 = "select m from Member m left outer join m.team t"; //외부 조인. outer 생략가능
-			String query3 = "select m from Member m, Team t where m.username = t.username"; //세타 조인. 조인문 필요x
-			String query4 = "select m from Member m left join m.team t on t.name = 'teamA'"; //on절 - 조인 대상 필터링
-			String query5 = "select m from Member m left join Team t on m.username = t.name"; //on절 - 연관관계 없는 엔티티 외부조인
-			List<Member> result = em.createQuery(query5, Member.class)
+			/*String query = "select m.username, 'HELLO', true from Member m " +
+					"where m.type = hellojpa.jpql.MemberType.ADMIN"; //이넘은 패키지명 포함해서 적는다.
+			*/
+
+			String query = "select m.username, 'HELLO', true from Member m " +
+					"where m.type = :userType"; //패키지명 대신 파라미터로 쓰면 더 간단
+			List<Object[]> result = em.createQuery(query)
+					.setParameter("userType", MemberType.ADMIN)
 					.getResultList();
 
 			System.out.println("result.size = " + result.size());
-			for (Member m :
+			for (Object[] objects:
 					result) {
-				System.out.println("member = " + m);
+				System.out.println("objects = "+ objects[0]);
+				System.out.println("objects = "+ objects[1]);
+				System.out.println("objects = "+ objects[2]);
 			}
 
 
