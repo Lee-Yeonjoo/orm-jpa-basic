@@ -20,42 +20,27 @@ public class JpqlApplication {
 
 		try {
 
-			Member member = new Member();
-			member.setUsername("member1");
-			member.setAge(10);
-			em.persist(member);
+			for (int i = 0; i < 100; i++) {
+				Member member = new Member();
+				member.setUsername("member" + i);
+				member.setAge(i);
+				em.persist(member);
+			}
 
 			em.flush();
 			em.clear();
 
-			/*List<Member> result = em.createQuery("select m from Member m", Member.class)
-							.getResultList(); //쿼리로 반환된 엔티티는 영속성 컨텍스트에 의해 관리된다.
+			List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class) //나이 역순으로 정렬.
+							.setFirstResult(1) //1번부터
+									.setMaxResults(10)  //10개 조회. 방언에 맞게 페이징을 해준다.
+											.getResultList();
 
-			Member findMember = result.get(0);
-			findMember.setAge(20); //영속성 컨텍스트에 의해 관리되니까 setter로 바꾼게 db에 알아서 반영됨.
-*/
-			List<Team> teams = em.createQuery("select t from Member m join m.team t", Team.class)
-					.getResultList(); //join을 할 때 jpql은 "select m.team from Member m"도 가능하지만 쿼리 튜닝을 위해 jpql에서도 예측이 되도록 join을 써야한다.
+			System.out.println("result.size = " + result.size());
+			for (Member m :
+					result) {
+				System.out.println("member = " + m);
+			}
 
-			em.createQuery("select o.address from Order o", Address.class)  //임베디드 타입 프로젝션. 어디 엔티티 소속인지 알아야함
-					.getResultList();
-
-			em.createQuery("select distinct m.username, m.age from Member m")
-					.getResultList();
-
-			/*List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
-							.getResultList();  //제네릭으로 오브젝트 배열을 지정.
-
-			Object[] o = resultList.get(0);
-			System.out.println("username = " + o[0]);
-			System.out.println("age = "+ o[1]);*/
-
-			List<MemberDTO> result = em.createQuery("select new hellojpa.jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class) //dto 생성자 생성하듯이 new를 통해 작성. -> 쿼리dsl 쓰면 import를 통해 패키지 경로 생략 가능
-					.getResultList();
-
-			MemberDTO memberDTO = result.get(0);
-			System.out.println(memberDTO.getUsername());
-			System.out.println(memberDTO.getAge());
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
