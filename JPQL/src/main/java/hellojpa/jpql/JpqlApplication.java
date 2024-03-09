@@ -25,7 +25,7 @@ public class JpqlApplication {
 			em.persist(team);
 
 			Member member = new Member();
-			member.setUsername("member");
+			member.setUsername(null);
 			member.setAge(10);
 			member.setType(MemberType.ADMIN);
 			member.setTeam(team);
@@ -35,22 +35,23 @@ public class JpqlApplication {
 			em.flush();
 			em.clear();
 
-			/*String query = "select m.username, 'HELLO', true from Member m " +
-					"where m.type = hellojpa.jpql.MemberType.ADMIN"; //이넘은 패키지명 포함해서 적는다.
-			*/
+			String query = "select " +
+								"case when m.age <= 10 then '학생요금' "+
+								"     when m.age >= 60 then '경로요금' "+
+								"     else '일반요금' "+
+								"end "+
+							"from Member m";
 
-			String query = "select m.username, 'HELLO', true from Member m " +
-					"where m.type = :userType"; //패키지명 대신 파라미터로 쓰면 더 간단
-			List<Object[]> result = em.createQuery(query)
-					.setParameter("userType", MemberType.ADMIN)
+			String query2 = "select coalesce(m.username, '이름 없는 회원') from Member m"; //null이면 '이름 없는 회원'으로 반환
+			String query3 = "select nullif(m.username, '관리자') from Member m";  //관리자의 이름을 숨기고 싶어서.
+
+			List<String> result = em.createQuery(query3, String.class)
 					.getResultList();
 
 			System.out.println("result.size = " + result.size());
-			for (Object[] objects:
+			for (String s:
 					result) {
-				System.out.println("objects = "+ objects[0]);
-				System.out.println("objects = "+ objects[1]);
-				System.out.println("objects = "+ objects[2]);
+				System.out.println("s = "+ s);
 			}
 
 
