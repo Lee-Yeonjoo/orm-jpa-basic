@@ -20,20 +20,27 @@ public class JpqlApplication {
 
 		try {
 
-			for (int i = 0; i < 100; i++) {
-				Member member = new Member();
-				member.setUsername("member" + i);
-				member.setAge(i);
-				em.persist(member);
-			}
+			Team team = new Team();
+			team.setName("teamA");
+			em.persist(team);
+
+			Member member = new Member();
+			member.setUsername("member");
+			member.setAge(10);
+			member.setTeam(team);
+
+			em.persist(member);
 
 			em.flush();
 			em.clear();
 
-			List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class) //나이 역순으로 정렬.
-							.setFirstResult(1) //1번부터
-									.setMaxResults(10)  //10개 조회. 방언에 맞게 페이징을 해준다.
-											.getResultList();
+			String query = "select m from Member m inner join m.team t"; //내부 조인. 이제 t 사용가능.
+			String query2 = "select m from Member m left outer join m.team t"; //외부 조인. outer 생략가능
+			String query3 = "select m from Member m, Team t where m.username = t.username"; //세타 조인. 조인문 필요x
+			String query4 = "select m from Member m left join m.team t on t.name = 'teamA'"; //on절 - 조인 대상 필터링
+			String query5 = "select m from Member m left join Team t on m.username = t.name"; //on절 - 연관관계 없는 엔티티 외부조인
+			List<Member> result = em.createQuery(query5, Member.class)
+					.getResultList();
 
 			System.out.println("result.size = " + result.size());
 			for (Member m :
