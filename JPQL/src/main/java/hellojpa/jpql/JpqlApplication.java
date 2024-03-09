@@ -25,25 +25,37 @@ public class JpqlApplication {
 			member.setAge(10);
 			em.persist(member);
 
-			TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class); //반환타입이 Member로 타입이 확실할 때 -> TypedQuery
-			TypedQuery<String> query2 = em.createQuery("select m.username from Member m", String.class);
-			Query query3 = em.createQuery("select m.username, m.age from Member m");  //반환타입이 string이랑 int 둘 다 있어서 확실하지 않음 -> Query
+			em.flush();
+			em.clear();
 
-			List<Member> resultList = query1.getResultList();  //쿼리의 결과가 하나 이상인 경우
-			for (Member member1 : resultList) {
-				System.out.println("member1 = "+ member1);
-			}
+			/*List<Member> result = em.createQuery("select m from Member m", Member.class)
+							.getResultList(); //쿼리로 반환된 엔티티는 영속성 컨텍스트에 의해 관리된다.
 
-			/*TypedQuery<Member> query = em.createQuery("select m from Member m where  m.id = 10", Member.class);
-			Member result = query.getSingleResult();
-			System.out.println("result = "+result);*/
+			Member findMember = result.get(0);
+			findMember.setAge(20); //영속성 컨텍스트에 의해 관리되니까 setter로 바꾼게 db에 알아서 반영됨.
+*/
+			List<Team> teams = em.createQuery("select t from Member m join m.team t", Team.class)
+					.getResultList(); //join을 할 때 jpql은 "select m.team from Member m"도 가능하지만 쿼리 튜닝을 위해 jpql에서도 예측이 되도록 join을 써야한다.
 
-			Member m = em.createQuery("select m from Member m where username = :username", Member.class)
-							.setParameter("username", "member1")
-							.getSingleResult();  //Query로 반환하기보단 보통은 메서드들을 체인으로
+			em.createQuery("select o.address from Order o", Address.class)  //임베디드 타입 프로젝션. 어디 엔티티 소속인지 알아야함
+					.getResultList();
 
-			System.out.println("singleResult = "+ m.getUsername());
+			em.createQuery("select distinct m.username, m.age from Member m")
+					.getResultList();
 
+			/*List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
+							.getResultList();  //제네릭으로 오브젝트 배열을 지정.
+
+			Object[] o = resultList.get(0);
+			System.out.println("username = " + o[0]);
+			System.out.println("age = "+ o[1]);*/
+
+			List<MemberDTO> result = em.createQuery("select new hellojpa.jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class) //dto 생성자 생성하듯이 new를 통해 작성. -> 쿼리dsl 쓰면 import를 통해 패키지 경로 생략 가능
+					.getResultList();
+
+			MemberDTO memberDTO = result.get(0);
+			System.out.println(memberDTO.getUsername());
+			System.out.println(memberDTO.getAge());
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
