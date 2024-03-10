@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Collection;
 import java.util.List;
 
 @SpringBootApplication
@@ -19,30 +20,36 @@ public class JpqlApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
+			Team team = new Team();
+			em.persist(team);
 
 			Member member1 = new Member();
 			member1.setUsername("관리자1");
+			member1.setTeam(team);
 			em.persist(member1);
 
 			Member member2 = new Member();
 			member2.setUsername("관리자2");
+			member2.setTeam(team);
 			em.persist(member2);
 
 			em.flush();
 			em.clear();
 
-			String concat = "select concat('a', 'b') from Member m"; //'a' || 'b'로도 가능. -> un-inject language해야함.
-			String substring = "select substring(m.username, 2, 3) from Member m"; //두번째부터 3개를 자르기
-			String locate = "select locate('de', 'abcdefg') from Member m"; //abcdefg에서 de의 위치를 반환. Integer로 반환.
-			String size = "select size(t.members) from Team t";  //t.members 컬렉션의 크기를 알려준다.
-			String index = "select index(t.members) from Team t";
-
-			List<Integer> result = em.createQuery(size, Integer.class)
+			/*String query = "select m.team from Member m"; //jpql은 객체 그래프 탐색이지만 실제 sql 쿼리는 묵시적 내부 조인이 발생한다. -> 묵시적 내부 조인이 안되도록 jpql 짜자
+			List<Team> result = em.createQuery(query, Team.class)
 					.getResultList();
 
-			for (Integer s: result) {
+			for (Team s: result) {
 				System.out.println("s = "+ s);
-			}
+			}*/
+
+			String query = "select t.members from Team t"; //묵시적 내부 조인 발생. 그러나 탐색은 불가능. 컬렉션의 size정도만 탐색 가능.
+			String query2 = "select m from Team t join t.members m";  //jpql에서도 명시적인 조인을 써야한다.
+			List<Collection> result = em.createQuery(query2 , Collection.class)
+							.getResultList();
+
+			System.out.println("result = "+result);
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
