@@ -20,36 +20,58 @@ public class JpqlApplication {
 		tx.begin(); //트랜잭션 시작
 
 		try {
-			Team team = new Team();
-			em.persist(team);
+			Team teamA = new Team();
+			teamA.setName("팀A");
+			em.persist(teamA);
+
+			Team teamB = new Team();
+			teamB.setName("팀B");
+			em.persist(teamB);
 
 			Member member1 = new Member();
-			member1.setUsername("관리자1");
-			member1.setTeam(team);
+			member1.setUsername("회원1");
+			member1.setTeam(teamA);
 			em.persist(member1);
 
 			Member member2 = new Member();
-			member2.setUsername("관리자2");
-			member2.setTeam(team);
+			member2.setUsername("회원2");
+			member2.setTeam(teamA);
 			em.persist(member2);
+
+			Member member3 = new Member();
+			member3.setUsername("회원3");
+			member3.setTeam(teamB);
+			em.persist(member3);
 
 			em.flush();
 			em.clear();
 
-			/*String query = "select m.team from Member m"; //jpql은 객체 그래프 탐색이지만 실제 sql 쿼리는 묵시적 내부 조인이 발생한다. -> 묵시적 내부 조인이 안되도록 jpql 짜자
-			List<Team> result = em.createQuery(query, Team.class)
-					.getResultList();
-
-			for (Team s: result) {
-				System.out.println("s = "+ s);
-			}*/
-
-			String query = "select t.members from Team t"; //묵시적 내부 조인 발생. 그러나 탐색은 불가능. 컬렉션의 size정도만 탐색 가능.
-			String query2 = "select m from Team t join t.members m";  //jpql에서도 명시적인 조인을 써야한다.
-			List<Collection> result = em.createQuery(query2 , Collection.class)
+			/*String query = "select m from Member m"; //팀 객체는 프록시
+			String query2 = "select m from Member m join fetch m.team"; //멤버와 팀을 한번에 조회 -> 팀 객체가 프록시가 아닌 진짜 객체
+			List<Member> result = em.createQuery(query2 , Member.class)
 							.getResultList();
 
-			System.out.println("result = "+result);
+			for (Member member :
+					result) {
+				System.out.println("member = "+ member.getUsername() + ", " + member.getTeam().getName());
+				//회원1, 팀A(SQL)
+				//회원2, 팀A(1차 캐시)
+				//회원3, 팀B(SQL)
+
+				//회원100 -> N + 1 문제  -> fetch join으로 해결
+			}*/
+
+			String query = "select distinct t from Team t join fetch t.members"; //컬렉션 페치 조인 -> 하이버네이트6부터는 distinct명령어를 안써도 중복 제거된다.
+			List<Team> result = em.createQuery(query , Team.class)
+					.getResultList();
+
+			for (Team t :
+					result) {
+				System.out.println("team = "+ t.getName() + ", " + t.getMembers().size());
+				for (Member member : t.getMembers()) {
+					System.out.println("- member = "+member);
+				}
+			}
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 		} catch (Exception e) {
