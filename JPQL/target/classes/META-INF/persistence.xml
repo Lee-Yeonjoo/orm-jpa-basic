@@ -21,6 +21,7 @@
             <property name="hibernate.use_sql_comments" value="true"/> <!-- 왜 실행했는지 자동 코멘트(주석)-->
             <property name="hibernate.jdbc.batch_size" value="10"/>
             <property name="hibernate.hbm2ddl.auto" value="create" /> <!-- 옵션을 create로 하면 실행 시 테이블을 drop 후 새로 생성-->
+            <property name="hibernate.default_batch_fetch_size" value="100"/> <!--@BatchSize옵션을 글로벌 세팅-->
         </properties>
     </persistence-unit>
 </persistence>

@@ -61,7 +61,7 @@ public class JpqlApplication {
 				//회원100 -> N + 1 문제  -> fetch join으로 해결
 			}*/
 
-			String query = "select distinct t from Team t join fetch t.members"; //컬렉션 페치 조인 -> 하이버네이트6부터는 distinct명령어를 안써도 중복 제거된다.
+			/*String query = "select distinct t from Team t join fetch t.members"; //컬렉션 페치 조인 -> 하이버네이트6부터는 distinct명령어를 안써도 중복 제거된다.
 			List<Team> result = em.createQuery(query , Team.class)
 					.getResultList();
 
@@ -71,9 +71,25 @@ public class JpqlApplication {
 				for (Member member : t.getMembers()) {
 					System.out.println("- member = "+member);
 				}
+			}*/
+
+			String query = "select t from Team t";
+			List<Team> result = em.createQuery(query , Team.class)
+					.setFirstResult(0)
+					.setMaxResults(2)
+					.getResultList();
+
+			System.out.println("result = "+result.size());
+
+			for (Team t : result) { //@BatchSize 옵션으로 쿼리가 두 번만 나간다. N+1문제 어느 정도 해결
+				System.out.println("team = " + t.getName() + ", " + t.getMembers().size());
+				for (Member member : t.getMembers()) {
+					System.out.println("- member = " + member);
+				}
 			}
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
+
 		} catch (Exception e) {
 			tx.rollback();
 			//e.printStackTrace();

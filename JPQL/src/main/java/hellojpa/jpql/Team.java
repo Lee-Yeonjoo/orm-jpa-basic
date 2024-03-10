@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Team {
     private Long id;
     private String name;
 
+    @BatchSize(size = 100)  //컬렉션을 페치 조인할 때 N+1 문제를 어느정도 해결 가능
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
 
