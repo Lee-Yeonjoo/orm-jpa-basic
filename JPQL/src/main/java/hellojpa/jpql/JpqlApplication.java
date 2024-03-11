@@ -43,17 +43,21 @@ public class JpqlApplication {
 			member3.setTeam(teamB);
 			em.persist(member3);
 
-			em.flush();
-			em.clear();
+			//em.flush();
+			//em.clear();
 
-			List<Member> members = em.createNamedQuery("Member.findByUsername", Member.class)
-							.setParameter("username", "회원1")
-									.getResultList();
+			//FLUSH 자동 호출 -> flush는 commit하거나 query가 나갈 때 자동 호출된다. 혹은 강제 호출 -> 영속성 컨텍스트 걱정 안해도 된다. 근데 벌크 연산 쿼리가 나간 후엔 영속성 컨텍스트 초기화 해줘야 한다!
+			int resultCount = em.createQuery("update Member m set m.age = 20")
+							.executeUpdate(); //벌크 연산. 쿼리가 한번만 나간다.
+			em.clear(); //영속성 컨텍스트를 초기화해준 후, 다시 멤버를 조회해야 db의 내용이 반영된다!
+			Member findMember = em.find(Member.class, member1.getId());
+			System.out.println("findMember = "+ findMember.getAge());
 
-			for (Member member :
-					members) {
-				System.out.println("member = "+ member);
-			}
+			System.out.println("resultCount = "+ resultCount);
+			System.out.println("member1.getAge() = "+ member1.getAge());  //db에만 반영되고, 영속성 컨텍스트엔 반영x
+			System.out.println("member2.getAge() = "+ member2.getAge());  //flush 시점의 데이터가 아직 영속성 컨텍스트에 있다.
+			System.out.println("member3.getAge() = "+ member3.getAge());
+
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 
