@@ -46,28 +46,14 @@ public class JpqlApplication {
 			em.flush();
 			em.clear();
 
+			List<Member> members = em.createNamedQuery("Member.findByUsername", Member.class)
+							.setParameter("username", "회원1")
+									.getResultList();
 
-			/*String query = "select m from Member m where m = :member"; //엔티티를 넘기면 sql에선 식별자로 바뀐다.
-			Member findMember = em.createQuery(query , Member.class)
-					.setParameter("member", member1)
-					.getSingleResult();*/
-
-			/*String query = "select m from Member m where m.id = :memberId"; //식별자를 넘겨도 동일한 sql
-			Member findMember = em.createQuery(query , Member.class)
-					.setParameter("memberId", member1.getId())
-					.getSingleResult();*/
-
-			//System.out.println("findMember = "+ findMember);
-
-			String query = "select m from Member m where m.team = :team"; //외래키 값을 엔티티로 넘겨도 sql은 식별자로 나간다.
-			List<Member> members = em.createQuery(query , Member.class)
-					.setParameter("team", teamA)
-					.getResultList();
-
-			for (Member member : members) {
+			for (Member member :
+					members) {
 				System.out.println("member = "+ member);
 			}
-
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 

@@ -3,6 +3,10 @@ package hellojpa.jpql;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQuery(
+        name = "Member.findByUsername",  //이름에 앞에 엔티티명 붙이는게 관례
+        query = "select m from Member m where m.username = :username"  //쿼리를 잘 못 쓴 경우, 애플리케이션 로딩 시점에 오류가 난다. -> 오류 잡기 쉽다.
+)
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
