@@ -46,47 +46,28 @@ public class JpqlApplication {
 			em.flush();
 			em.clear();
 
-			/*String query = "select m from Member m"; //팀 객체는 프록시
-			String query2 = "select m from Member m join fetch m.team"; //멤버와 팀을 한번에 조회 -> 팀 객체가 프록시가 아닌 진짜 객체
-			List<Member> result = em.createQuery(query2 , Member.class)
-							.getResultList();
 
-			for (Member member :
-					result) {
-				System.out.println("member = "+ member.getUsername() + ", " + member.getTeam().getName());
-				//회원1, 팀A(SQL)
-				//회원2, 팀A(1차 캐시)
-				//회원3, 팀B(SQL)
+			/*String query = "select m from Member m where m = :member"; //엔티티를 넘기면 sql에선 식별자로 바뀐다.
+			Member findMember = em.createQuery(query , Member.class)
+					.setParameter("member", member1)
+					.getSingleResult();*/
 
-				//회원100 -> N + 1 문제  -> fetch join으로 해결
-			}*/
+			/*String query = "select m from Member m where m.id = :memberId"; //식별자를 넘겨도 동일한 sql
+			Member findMember = em.createQuery(query , Member.class)
+					.setParameter("memberId", member1.getId())
+					.getSingleResult();*/
 
-			/*String query = "select distinct t from Team t join fetch t.members"; //컬렉션 페치 조인 -> 하이버네이트6부터는 distinct명령어를 안써도 중복 제거된다.
-			List<Team> result = em.createQuery(query , Team.class)
+			//System.out.println("findMember = "+ findMember);
+
+			String query = "select m from Member m where m.team = :team"; //외래키 값을 엔티티로 넘겨도 sql은 식별자로 나간다.
+			List<Member> members = em.createQuery(query , Member.class)
+					.setParameter("team", teamA)
 					.getResultList();
 
-			for (Team t :
-					result) {
-				System.out.println("team = "+ t.getName() + ", " + t.getMembers().size());
-				for (Member member : t.getMembers()) {
-					System.out.println("- member = "+member);
-				}
-			}*/
-
-			String query = "select t from Team t";
-			List<Team> result = em.createQuery(query , Team.class)
-					.setFirstResult(0)
-					.setMaxResults(2)
-					.getResultList();
-
-			System.out.println("result = "+result.size());
-
-			for (Team t : result) { //@BatchSize 옵션으로 쿼리가 두 번만 나간다. N+1문제 어느 정도 해결
-				System.out.println("team = " + t.getName() + ", " + t.getMembers().size());
-				for (Member member : t.getMembers()) {
-					System.out.println("- member = " + member);
-				}
+			for (Member member : members) {
+				System.out.println("member = "+ member);
 			}
+
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 
