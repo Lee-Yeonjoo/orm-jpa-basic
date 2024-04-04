@@ -1,18 +1,20 @@
 package jpa.exercise.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder
+/*@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class Item {
+@AllArgsConstructor*/
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) //싱글테이블 전략
+@DiscriminatorColumn(name = "DTYPE")
+@Getter
+@Setter
+public abstract class Item extends BaseEntity { //Item만 단독으로 저장하는 경우가 없다면 추상클래스로 만든다. -> 빌더패턴 관련 롬복 사용 못함
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

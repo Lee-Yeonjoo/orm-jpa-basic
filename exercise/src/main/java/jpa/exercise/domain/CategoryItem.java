@@ -3,7 +3,7 @@ package jpa.exercise.domain;
 import jakarta.persistence.*;
 
 @Entity
-public class CategoryItem {
+public class CategoryItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

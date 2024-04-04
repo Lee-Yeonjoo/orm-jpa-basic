@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import jpa.exercise.domain.Album;
+import jpa.exercise.domain.Item;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -21,9 +23,15 @@ public class ExerciseApplication {
 		tx.begin(); //트랜잭션 시작
 		try {
 
+			Album album = new Album();
+			album.setArtist("아이유");
+			album.setEtc("etc");
+			em.persist(album);
 
 			em.flush();
 			em.clear();
+
+
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 
