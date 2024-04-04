@@ -1,12 +1,12 @@
 package jpa.exercise.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -21,4 +21,10 @@ public class Item {
     private String name;
     private int price;
     private int stockQuantity;
+
+    @OneToMany(mappedBy = "item")
+    private List<CategoryItem> categoryItems = new ArrayList<>();
+
+    /*@ManyToMany(mappedBy = "items") //다대다 매핑. 연관관계의 주인이 items
+    private List<Category> categories = new ArrayList<>();*/
 }
