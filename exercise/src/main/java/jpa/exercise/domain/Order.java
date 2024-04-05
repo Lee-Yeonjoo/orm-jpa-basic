@@ -24,7 +24,7 @@ public class Order extends BaseEntity{
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //영속성 전이 ALL로 설정
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private Date orderDate;
@@ -32,7 +32,7 @@ public class Order extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) //지연로딩 설정, 영속성 전이 ALL로 설정
     @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
 }

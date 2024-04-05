@@ -24,7 +24,7 @@ public class Category extends BaseEntity{
     )
     private List<Item> items = new ArrayList<>();*/
 
-    @ManyToOne //자식 입장에서 부모가 하나
+    @ManyToOne(fetch = FetchType.LAZY) //자식 입장에서 부모가 하나 //지연로딩 설정
     @JoinColumn(name = "PARENT_ID")
     private Category parent;
 
