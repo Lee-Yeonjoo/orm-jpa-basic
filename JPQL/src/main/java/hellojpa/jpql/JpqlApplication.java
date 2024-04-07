@@ -37,7 +37,7 @@ public class JpqlApplication {
 
 			Member member2 = new Member();
 			member2.setUsername("회원B");
-			member2.setTeam(team2);
+			member2.setTeam(team);
 			member2.setAge(20);
 			member2.setType(MemberType.USER);
 			em.persist(member2);
@@ -46,6 +46,15 @@ public class JpqlApplication {
 			em.clear();
 
 
+			String query = "select t from Team t join t.members";
+			List<Team> teams = em.createQuery(query,Team.class)
+							.getResultList();
+
+			System.out.println("리스트 크기: "+teams.size());
+			for (Team m : teams) {
+				System.out.println(m);
+				System.out.println(m.getMembers());
+			}
 
 			tx.commit(); //트랜잭션 끝 -> 저장(커밋)
 

@@ -2,6 +2,8 @@ package hellojpa.jpql;
 
 import jakarta.persistence.*;
 
+import java.util.Optional;
+
 @Entity
 /*@NamedQuery(
         name = "Member.findByUsername",  //이름에 앞에 엔티티명 붙이는게 관례
@@ -72,6 +74,7 @@ public class Member {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", age=" + age +
+                //", team= " + Optional.ofNullable(team) +
                 '}';
     }
 }
